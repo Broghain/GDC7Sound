@@ -124,4 +124,9 @@ public class GameManager : MonoBehaviour {
         score += amount;
         UI.SetScoreText(score.ToString());
     }
+
+    public bool IsGameStarted()
+    {
+        return gameStarted;
+    }
 }
