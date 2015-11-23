@@ -11,9 +11,12 @@ public class GameManager : MonoBehaviour {
 
     private bool gamePaused;
     private bool gameStarted;
+    private bool gameOver;
     
     private bool countdownStarted;
     private float startTimer;
+
+    private int livesCount = 3;
 
     void Awake()
     {
@@ -23,7 +26,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         UI = GameObject.FindObjectOfType<UIController>();
-        StartGame(false);
+        StartGame();
 	}
 	
 	// Update is called once per frame
@@ -57,7 +60,7 @@ public class GameManager : MonoBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                StartGame(false);
+                StartGame();
                 countdownStarted = true;
             }
 
@@ -66,7 +69,20 @@ public class GameManager : MonoBehaviour {
                 Application.Quit();
             }
         }
-        
+
+        if (gameOver)
+        {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                Time.timeScale = 1;
+                Application.LoadLevel(Application.loadedLevel);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
+        }
 
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -78,7 +94,8 @@ public class GameManager : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.R))
             {
                 TogglePause();
-                StartGame(true);
+                StartGame();
+                countdownStarted = true;
             }
 
             if (Input.GetKeyDown(KeyCode.Q))
@@ -94,7 +111,7 @@ public class GameManager : MonoBehaviour {
         }       
     }
 
-    public void StartGame(bool keepSong)
+    public void StartGame()
     {
         score = 0;
         UI.SetScoreText(score.ToString());
@@ -122,11 +139,34 @@ public class GameManager : MonoBehaviour {
     public void IncreaseScore(int amount)
     {
         score += amount;
+        score = Mathf.Clamp(score, 0, 999999999);
+        UI.SetScoreText(score.ToString());
+    }
+
+    public void DecreaseScore(int amount)
+    {
+        score -= amount;
+        score = Mathf.Clamp(score, 0, 999999999);
         UI.SetScoreText(score.ToString());
     }
 
     public bool IsGameStarted()
     {
         return gameStarted;
+    }
+
+    public void DecreaseLife()
+    {
+        if (livesCount > 0)
+        {
+            UI.DisableLifeImg(livesCount);
+            livesCount--;
+            if (livesCount == 0)
+            {
+                UI.SetCenterText("Game Over");
+                gameOver = true;
+                Time.timeScale = 0;
+            }
+        }
     }
 }

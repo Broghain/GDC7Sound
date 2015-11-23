@@ -5,7 +5,8 @@ using System.Collections;
 public class UIController : MonoBehaviour {
 
     [SerializeField]
-    private GameObject pausePanel, livesLabel;
+    private GameObject pausePanel;
+
 
     [SerializeField]
     private Text centerText, scoreText, instructionText;
@@ -31,5 +32,10 @@ public class UIController : MonoBehaviour {
     public void SetInstructionText(string text)
     {
         instructionText.text = text;
+    }
+
+    public void DisableLifeImg(int lives)
+    {
+        livesImages[lives - 1].SetActive(false);
     }
 }
