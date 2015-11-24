@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour {
 
     private int livesCount = 3;
 
+    private AudioSource audioSource;
+
     void Awake()
     {
         instance = this;
@@ -26,6 +28,8 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         UI = GameObject.FindObjectOfType<UIController>();
+        audioSource = GetComponent<AudioSource>();
+
         StartGame();
 	}
 	
@@ -40,6 +44,7 @@ public class GameManager : MonoBehaviour {
             if (startTimer < 0.0f)
             {
                 UI.SetCenterText("Start!");
+                audioSource.Play();
             }
             else
             {
@@ -91,13 +96,6 @@ public class GameManager : MonoBehaviour {
 
         if (gamePaused)
         {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                TogglePause();
-                StartGame();
-                countdownStarted = true;
-            }
-
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 TogglePause();
@@ -126,12 +124,14 @@ public class GameManager : MonoBehaviour {
         {
             gamePaused = false;
             Time.timeScale = 1;
+            audioSource.UnPause();
             
         }
         else
         {
             gamePaused = true;
             Time.timeScale = 0;
+            audioSource.Pause();
         }
         UI.SetPausePanel(gamePaused);
     }
