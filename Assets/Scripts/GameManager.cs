@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) && !gameStarted)
         {
             TogglePause();
         }
@@ -153,6 +153,11 @@ public class GameManager : MonoBehaviour {
     public bool IsGameStarted()
     {
         return gameStarted;
+    }
+
+    public bool IsGameOver()
+    {
+        return gameOver;
     }
 
     public void DecreaseLife()

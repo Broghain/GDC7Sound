@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AudioProcessor : MonoBehaviour {
-
+//http://pastebin.com/myXiu97R
+public class AudioProcessor : MonoBehaviour
+{
     private AudioSource source;
 
     private long lastT, nowT, diff, entries, sum;
@@ -91,6 +92,8 @@ public class AudioProcessor : MonoBehaviour {
         entries++;
 
         int average = (int)(sum / entries);
+
+        Debug.Log("average = " + average);
     }
 
     double[] toDoubleArray(float[] arr)
@@ -119,7 +122,7 @@ public class AudioProcessor : MonoBehaviour {
             {
                 foreach (AudioCallbacks callback in callbacks)
                 {
-                    callback.onSpectrum(averages);
+                    callback.OnSpectrum(averages);
                 }
             }
 
@@ -207,7 +210,7 @@ public class AudioProcessor : MonoBehaviour {
                     {
                         foreach (AudioCallbacks callback in callbacks)
                         {
-                            callback.onOnbeatDetected();
+                            callback.OnBeatDetected();
                         }
                     }
                     blipDelay[0] = 1;
@@ -321,8 +324,8 @@ public class AudioProcessor : MonoBehaviour {
 
     public interface AudioCallbacks
     {
-        void onOnbeatDetected();
-        void onSpectrum(float[] spectrum);
+        void OnBeatDetected();
+        void OnSpectrum(float[] spectrum);
     }
 
     // class to compute an array of online autocorrelators

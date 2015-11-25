@@ -16,6 +16,7 @@ public class RhythmManager : MonoBehaviour, AudioProcessor.AudioCallbacks {
     private List<RhythmBehaviour> entities = new List<RhythmBehaviour>();
 
     private AudioProcessor audioProcessor;
+    private AudioReader audioReader;
 
     void Awake()
     {
@@ -25,6 +26,7 @@ public class RhythmManager : MonoBehaviour, AudioProcessor.AudioCallbacks {
 	// Use this for initialization
 	void Start () {
         audioProcessor = FindObjectOfType<AudioProcessor>();
+        audioReader = GetComponent<AudioReader>();
         audioProcessor.addAudioCallback(this);
 	}
 	
@@ -57,7 +59,7 @@ public class RhythmManager : MonoBehaviour, AudioProcessor.AudioCallbacks {
         entities.Remove(entity);
     }
     
-    public void onOnbeatDetected()
+    public void OnBeatDetected()
     {
         foreach (RhythmBehaviour entity in entities)
         {
@@ -68,7 +70,7 @@ public class RhythmManager : MonoBehaviour, AudioProcessor.AudioCallbacks {
         }
     }
 
-    public void onSpectrum(float[] spectrum)
+    public void OnSpectrum(float[] spectrum)
     {
         //The spectrum is logarithmically averaged
         //to 12 bands

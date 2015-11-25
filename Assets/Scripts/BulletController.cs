@@ -42,7 +42,10 @@ public class BulletController : RhythmBehaviour {
 
     public override void RhythmicUpdate()
     {
-        nextPosition = transform.position + moveDirection.normalized;
+        if (!GameManager.instance.IsGameOver())
+        {
+            nextPosition = transform.position + moveDirection.normalized;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collider)

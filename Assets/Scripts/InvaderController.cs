@@ -8,8 +8,8 @@ public class InvaderController : RhythmBehaviour
     
     private Vector3 nextPosition;
 
-    private int rowLength; //Length of invader row I am in
-    private int rowIndex; //What position in row do I have
+    private int rowLength;
+    private int rowIndex; 
 
     [SerializeField]
     private GameObject explosionPrefab;
@@ -75,7 +75,7 @@ public class InvaderController : RhythmBehaviour
             {
                 nextStep = Step.Left;
             }
-            else if(previousStep == Step.Left)
+            else if (previousStep == Step.Left)
             {
                 nextStep = Step.Right;
             }
@@ -107,8 +107,11 @@ public class InvaderController : RhythmBehaviour
 
     public override void RhythmicUpdate()
     {
-        MoveToNextPos();
-        ShootProjectile();
+        if (!GameManager.instance.IsGameOver())
+        {
+            MoveToNextPos();
+            ShootProjectile();
+        }
     }
 
     public void SetRowIndex(int rowLength, int rowIndex)
