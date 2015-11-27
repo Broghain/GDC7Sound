@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InvaderController : RhythmBehaviour
+public class InvaderController : MonoBehaviour
 {
     private SpawnManager spawnManager;
-    private RhythmManager rhythmManager;
     
     private Vector3 nextPosition;
 
@@ -29,7 +28,7 @@ public class InvaderController : RhythmBehaviour
     private float maxX;
     private float minX;
 
-    float timer = 0.5f;
+    private float timer = 0.5f;
 
 	// Use this for initialization
 	void Start () {
@@ -39,12 +38,18 @@ public class InvaderController : RhythmBehaviour
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         nextPosition = transform.position;
         spawnManager = SpawnManager.instance;
-        rhythmManager = RhythmManager.instance;
-        rhythmManager.AddRhythmEntity(this);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        timer -= Time.deltaTime;
+        if (timer <= 0 && !GameManager.instance.IsGameOver())
+        {
+            MoveToNextPos();
+            ShootProjectile();
+            timer = 0.5f;
+        }
+
         transform.position = Vector3.Lerp(transform.position, nextPosition, 10 * Time.deltaTime);
 
         if (transform.position.y <= -2.5f)
@@ -52,7 +57,6 @@ public class InvaderController : RhythmBehaviour
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             GameManager.instance.DecreaseScore(500);
             spawnManager.DecreaseEnemyCount(this);
-            rhythmManager.RemoveRhythmEntity(this);
             Destroy(this.gameObject);
         }
 	}
@@ -105,15 +109,6 @@ public class InvaderController : RhythmBehaviour
         }
     }
 
-    public override void RhythmicUpdate()
-    {
-        if (!GameManager.instance.IsGameOver())
-        {
-            MoveToNextPos();
-            ShootProjectile();
-        }
-    }
-
     public void SetRowIndex(int rowLength, int rowIndex)
     {
         this.rowLength = rowLength;
@@ -124,7 +119,6 @@ public class InvaderController : RhythmBehaviour
     {
         GameManager.instance.IncreaseScore(50);
         spawnManager.DecreaseEnemyCount(this);
-        rhythmManager.RemoveRhythmEntity(this);
         Destroy(this.gameObject);
     }
 }

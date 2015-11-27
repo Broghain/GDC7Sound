@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UFOController : RhythmBehaviour {
-
-    private RhythmManager rhythmManager;
-
+public class UFOController : MonoBehaviour
+{
     private Vector3 nextPosition;
 
     private Vector3 direction;
@@ -21,31 +19,21 @@ public class UFOController : RhythmBehaviour {
         {
             direction = Vector3.left;
         }
-
-        rhythmManager = RhythmManager.instance;
-        rhythmManager.AddRhythmEntity(this);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position = Vector3.Lerp(transform.position, nextPosition, 5 * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, transform.position + direction, 5 * Time.deltaTime);
 
         if (transform.position.x > 10 || transform.position.x < -10)
         {
-            rhythmManager.RemoveRhythmEntity(this);
             Destroy(this.gameObject);
         }
 	}
 
-    public override void RhythmicUpdate()
-    {
-        nextPosition += direction;
-    }
-
     public void Kill()
     {
         GameManager.instance.IncreaseScore(1000);
-        rhythmManager.RemoveRhythmEntity(this);
         Destroy(this.gameObject);
     }
 }

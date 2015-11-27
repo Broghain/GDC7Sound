@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BulletController : RhythmBehaviour {
-
-    private RhythmManager rhythmManager;
-
+public class BulletController : MonoBehaviour
+{
     private float timer = 0.5f;
 
     private Vector3 nextPosition;
@@ -24,36 +22,23 @@ public class BulletController : RhythmBehaviour {
 
         bottomLeft = Camera.main.ScreenToWorldPoint(Vector3.zero);
         topRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
-
-        rhythmManager = RhythmManager.instance;
-        rhythmManager.AddRhythmEntity(this);
 	}
 	
 	// Update is called once per frame
 	void Update () {
         transform.position = Vector3.Lerp(transform.position, nextPosition, 10 * Time.deltaTime);
-
+        nextPosition = transform.position + moveDirection.normalized;
         if (transform.position.y > topRight.y || transform.position.y < bottomLeft.y)
         {
-            rhythmManager.RemoveRhythmEntity(this);
             Destroy(this.gameObject);
         }
 	}
-
-    public override void RhythmicUpdate()
-    {
-        if (!GameManager.instance.IsGameOver())
-        {
-            nextPosition = transform.position + moveDirection.normalized;
-        }
-    }
 
     void OnTriggerEnter2D(Collider2D collider)
     {
         InvaderController invader = collider.GetComponent<InvaderController>();
         if (invader)
         {
-            rhythmManager.RemoveRhythmEntity(this);
             Instantiate(explosionPrefab, invader.transform.position, Quaternion.identity);
             invader.Kill();
             Destroy(this.gameObject);
@@ -63,7 +48,6 @@ public class BulletController : RhythmBehaviour {
         ShieldController shield = collider.GetComponent<ShieldController>();
         if(shield)
         {
-            rhythmManager.RemoveRhythmEntity(this);
             Instantiate(explosionPrefab, shield.transform.position, Quaternion.identity);
             shield.Damage();
             Destroy(this.gameObject);
@@ -73,7 +57,6 @@ public class BulletController : RhythmBehaviour {
         UFOController ufo = collider.GetComponent<UFOController>();
         if (ufo)
         {
-            rhythmManager.RemoveRhythmEntity(this);
             Instantiate(explosionPrefab, ufo.transform.position, Quaternion.identity);
             ufo.Kill();
             Destroy(this.gameObject);
@@ -85,7 +68,6 @@ public class BulletController : RhythmBehaviour {
         {
             Instantiate(explosionPrefab, player.transform.position, Quaternion.identity);
             player.Reset();
-            rhythmManager.RemoveRhythmEntity(this);
             GameManager.instance.DecreaseLife();
             Destroy(this.gameObject);
             return;
