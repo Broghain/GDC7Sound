@@ -4,6 +4,7 @@ using System.Collections;
 public class InvaderController : MonoBehaviour
 {
     private SpawnManager spawnManager;
+    private InvaderManager invaderManager;
     
     private Vector3 nextPosition;
 
@@ -16,6 +17,8 @@ public class InvaderController : MonoBehaviour
     [SerializeField]
     private GameObject projecilePrefab;
 
+    private SpriteRenderer renderer;
+
     private enum Step
     {
         Left,
@@ -25,29 +28,63 @@ public class InvaderController : MonoBehaviour
     private Step nextStep = Step.Right;
     private Step previousStep = Step.Down;
 
+    private Behaviour myBehaviour;
+
     private float maxX;
     private float minX;
 
-    private float timer = 0.5f;
+    private int shootChance = 2;
+    
+    private float moveTime = 1.0f;
+    private float timer = 0;
+
+    private int scoreValue = 50;
 
 	// Use this for initialization
 	void Start () {
         minX = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0)).x;
         maxX = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
 
+        renderer = GetComponent<SpriteRenderer>();
+
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         nextPosition = transform.position;
         spawnManager = SpawnManager.instance;
+        invaderManager = InvaderManager.instance;
+
+        myBehaviour = Behaviour.None;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        timer -= Time.deltaTime;
-        if (timer <= 0 && !GameManager.instance.IsGameOver())
+        Behaviour newBehaviour = invaderManager.CheckBehaviour();
+        if (newBehaviour != myBehaviour)
+        {
+            myBehaviour = newBehaviour;
+
+            switch (myBehaviour)
+            {
+                case Behaviour.Slow: 
+                    shootChance = 2; 
+                    moveTime = 1.0f;
+                    scoreValue = 25;
+                    renderer.color = Color.cyan;
+                    break;
+                case Behaviour.Fast:
+                    shootChance = 5;
+                    moveTime = 0.5f;
+                    scoreValue = 50;
+                    renderer.color = Color.red;
+                    break;
+            }
+        }
+
+        timer += Time.deltaTime;
+        if (timer >= moveTime && !GameManager.instance.IsGameOver())
         {
             MoveToNextPos();
             ShootProjectile();
-            timer = 0.5f;
+            timer = 0f;
         }
 
         transform.position = Vector3.Lerp(transform.position, nextPosition, 10 * Time.deltaTime);
@@ -56,7 +93,7 @@ public class InvaderController : MonoBehaviour
         {
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             GameManager.instance.DecreaseScore(500);
-            spawnManager.DecreaseEnemyCount(this);
+            spawnManager.DecreaseEnemyCount(this, false);
             Destroy(this.gameObject);
         }
 	}
@@ -103,7 +140,7 @@ public class InvaderController : MonoBehaviour
     void ShootProjectile()
     {
         int random = Random.Range(0, 100);
-        if (random < 2)
+        if (random <= shootChance)
         {
             Instantiate(projecilePrefab, nextPosition + Vector3.down, Quaternion.identity);
         }
@@ -117,8 +154,8 @@ public class InvaderController : MonoBehaviour
 
     public void Kill()
     {
-        GameManager.instance.IncreaseScore(50);
-        spawnManager.DecreaseEnemyCount(this);
+        GameManager.instance.IncreaseScore(scoreValue);
+        spawnManager.DecreaseEnemyCount(this, true);
         Destroy(this.gameObject);
     }
 }

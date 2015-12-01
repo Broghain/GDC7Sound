@@ -34,6 +34,7 @@ public class UFOController : MonoBehaviour
     public void Kill()
     {
         GameManager.instance.IncreaseScore(1000);
+        GameManager.instance.IncreaseLife();
         Destroy(this.gameObject);
     }
 }

@@ -38,4 +38,9 @@ public class UIController : MonoBehaviour {
     {
         livesImages[lives - 1].SetActive(false);
     }
+
+    public void EnableLifeImg(int lives)
+    {
+        livesImages[lives].SetActive(true);
+    }
 }

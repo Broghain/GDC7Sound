@@ -85,11 +85,11 @@ public class SpawnManager : MonoBehaviour {
         waveSize += (waveSize / 2);
     }
 
-    public void DecreaseEnemyCount(InvaderController invader)
+    public void DecreaseEnemyCount(InvaderController invader, bool shotByPlayer)
     {
         invaders.Remove(invader);
 
-        if (invaders.Count == 0)
+        if (invaders.Count == 0 && shotByPlayer)
         {
             waveSize += waveNum * 2;
             gameManager.IncreaseScore(100 * waveNum);

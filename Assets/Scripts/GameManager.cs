@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.P) && !gameStarted)
+        if (Input.GetKeyDown(KeyCode.P) && !gameOver)
         {
             TogglePause();
         }
@@ -172,6 +172,15 @@ public class GameManager : MonoBehaviour {
                 gameOver = true;
                 Time.timeScale = 0;
             }
+        }
+    }
+
+    public void IncreaseLife()
+    {
+        if (livesCount < 3)
+        {
+            UI.EnableLifeImg(livesCount);
+            livesCount++;
         }
     }
 }

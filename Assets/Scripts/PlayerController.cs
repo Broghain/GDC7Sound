@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
 
 
             timer -= Time.deltaTime;
-            if (Input.GetKey(KeyCode.Z) && timer <= 0)
+            if (Input.GetKey(KeyCode.Space) && timer <= 0)
             {
                 Instantiate(bulletPrefab, transform.position + (Vector3.up/2), Quaternion.identity);
                 timer = 0.5f;
