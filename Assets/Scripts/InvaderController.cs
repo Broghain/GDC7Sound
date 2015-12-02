@@ -18,6 +18,9 @@ public class InvaderController : MonoBehaviour
     private GameObject projecilePrefab;
 
     private SpriteRenderer renderer;
+    public int spriteColorR;
+    public int spriteColorG;
+    public int spriteColorB;
 
     private enum Step
     {
@@ -35,7 +38,7 @@ public class InvaderController : MonoBehaviour
 
     private int shootChance = 2;
     
-    private float moveTime = 1.0f;
+    public float moveTime = 1.0f;
     private float timer = 0;
 
     private int scoreValue = 50;
@@ -46,38 +49,22 @@ public class InvaderController : MonoBehaviour
         maxX = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
 
         renderer = GetComponent<SpriteRenderer>();
+        spriteColorR = 255;
+        spriteColorG = 255;
+        spriteColorB = 255;
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         nextPosition = transform.position;
         spawnManager = SpawnManager.instance;
         invaderManager = InvaderManager.instance;
-
-        myBehaviour = Behaviour.None;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        Behaviour newBehaviour = invaderManager.CheckBehaviour();
-        if (newBehaviour != myBehaviour)
-        {
-            myBehaviour = newBehaviour;
+        ChangeColor();
 
-            switch (myBehaviour)
-            {
-                case Behaviour.Slow: 
-                    shootChance = 2; 
-                    moveTime = 1.0f;
-                    scoreValue = 25;
-                    renderer.color = Color.cyan;
-                    break;
-                case Behaviour.Fast:
-                    shootChance = 5;
-                    moveTime = 0.5f;
-                    scoreValue = 50;
-                    renderer.color = Color.red;
-                    break;
-            }
-        }
+        moveTime = 1.0f - (invaderManager.GetDBValue() / 50);
+        moveTime = Mathf.Clamp(moveTime, 0.25f, 1.5f);
 
         timer += Time.deltaTime;
         if (timer >= moveTime && !GameManager.instance.IsGameOver())
@@ -97,6 +84,32 @@ public class InvaderController : MonoBehaviour
             Destroy(this.gameObject);
         }
 	}
+
+    void ChangeColor()
+    {
+        float dbVal = invaderManager.GetDBValue();
+        if (dbVal < 0)
+        {
+            dbVal = Mathf.Abs(dbVal);
+            spriteColorR -= (int)dbVal;
+            spriteColorR = Mathf.Clamp(spriteColorR, 0, 255);
+            spriteColorG += (int)dbVal;
+            spriteColorG = Mathf.Clamp(spriteColorG, 0, 255);
+            spriteColorB += (int)dbVal;
+            spriteColorB = Mathf.Clamp(spriteColorB, 0, 255);
+        }
+        else
+        {
+            dbVal = Mathf.Abs(dbVal);
+            spriteColorR += (int)dbVal;
+            spriteColorR = Mathf.Clamp(spriteColorR, 0, 255);
+            spriteColorG -= (int)dbVal;
+            spriteColorG = Mathf.Clamp(spriteColorG, 0, 255);
+            spriteColorB -= (int)dbVal;
+            spriteColorB = Mathf.Clamp(spriteColorB, 0, 255);
+        }
+        renderer.color = new Color32((byte)spriteColorR, (byte)spriteColorG, (byte)spriteColorB, 255);
+    }
 
     void MoveToNextPos()
     {
@@ -140,7 +153,7 @@ public class InvaderController : MonoBehaviour
     void ShootProjectile()
     {
         int random = Random.Range(0, 100);
-        if (random <= shootChance)
+        if (random <= invaderManager.GetPitchValue()/10)
         {
             Instantiate(projecilePrefab, nextPosition + Vector3.down, Quaternion.identity);
         }

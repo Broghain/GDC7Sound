@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameObject bulletPrefab;
 
-    public float timer = 0.5f;
+    private float timer = 0.5f;
 
     private Vector3 startPosition;
 
@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
             {
                 nextPosition = transform.position + Vector3.right;
             }
-            nextPosition.x = Mathf.Clamp(nextPosition.x, -7, 7);
+            nextPosition.x = Mathf.Clamp(nextPosition.x, -8, 8);
             transform.position = Vector3.Lerp(transform.position, nextPosition, 10 * Time.deltaTime);
 
 

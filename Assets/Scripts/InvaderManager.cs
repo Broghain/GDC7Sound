@@ -9,7 +9,9 @@ public class InvaderManager : MonoBehaviour {
     private Behaviour nextBehaviour;
 
     private float timer = 0;
-    public float changeValue = 0;
+
+    private float dBValue = 0;
+    private float pitchValue = 0;
 
     void Awake()
     {
@@ -24,14 +26,7 @@ public class InvaderManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        if (timer > 0)
-        {
-            timer -= Time.deltaTime;
-            if (timer <= 0)
-            {
-                currentBehaviour = nextBehaviour;
-            }
-        }
+        currentBehaviour = nextBehaviour;
 	}
 
     //All invaders check which behaviour they should apply in each Update cycle
@@ -40,19 +35,20 @@ public class InvaderManager : MonoBehaviour {
         return currentBehaviour;
     }
 
-    public void ChangeBehaviour(float value)
+    public void ChangeBehaviour(float dBValue, float pitchValue)
     {
-        value = Mathf.Sign(value);
-        if (value > 0 && nextBehaviour == Behaviour.Slow)
-        {
-            nextBehaviour = Behaviour.Fast;
-            timer = 0.5f;
-        }
-        else if(value < 0 && nextBehaviour == Behaviour.Fast)
-        {
-            nextBehaviour = Behaviour.Slow;
-            timer = 0.5f;
-        }
+        this.dBValue = dBValue;
+        this.pitchValue = pitchValue;
+    }
+
+    public float GetPitchValue()
+    {
+        return pitchValue;
+    }
+
+    public float GetDBValue()
+    {
+        return dBValue;
     }
 }
 
